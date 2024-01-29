@@ -30,12 +30,13 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.renderers import StaticHTMLRenderer
 from rest_framework.negotiation import DefaultContentNegotiation
 
+from ansible_base.rest_filters.rest_framework.field_lookup_backend import FieldLookupBackend
+from ansible_base.lib.utils.models import get_all_field_names
+
 # AWX
-from awx.api.filters import FieldLookupBackend
 from awx.main.models import UnifiedJob, UnifiedJobTemplate, User, Role, Credential, WorkflowJobTemplateNode, WorkflowApprovalTemplate
 from awx.main.access import optimize_queryset
 from awx.main.utils import camelcase_to_underscore, get_search_fields, getattrd, get_object_or_400, decrypt_field, get_awx_version
-from awx.main.utils.db import get_all_field_names
 from awx.main.utils.licensing import server_product_name
 from awx.main.views import ApiErrorView
 from awx.api.serializers import ResourceAccessListElementSerializer, CopySerializer
@@ -90,7 +91,7 @@ class LoggedLoginView(auth_views.LoginView):
         ret = super(LoggedLoginView, self).post(request, *args, **kwargs)
         if request.user.is_authenticated:
             logger.info(smart_str(u"User {} logged in from {}".format(self.request.user.username, request.META.get('REMOTE_ADDR', None))))
-            ret.set_cookie('userLoggedIn', 'true')
+            ret.set_cookie('userLoggedIn', 'true', secure=getattr(settings, 'SESSION_COOKIE_SECURE', False))
             ret.setdefault('X-API-Session-Cookie-Name', getattr(settings, 'SESSION_COOKIE_NAME', 'awx_sessionid'))
 
             return ret
@@ -106,7 +107,7 @@ class LoggedLogoutView(auth_views.LogoutView):
         original_user = getattr(request, 'user', None)
         ret = super(LoggedLogoutView, self).dispatch(request, *args, **kwargs)
         current_user = getattr(request, 'user', None)
-        ret.set_cookie('userLoggedIn', 'false')
+        ret.set_cookie('userLoggedIn', 'false', secure=getattr(settings, 'SESSION_COOKIE_SECURE', False))
         if (not current_user or not getattr(current_user, 'pk', True)) and current_user != original_user:
             logger.info("User {} logged out.".format(original_user.username))
         return ret

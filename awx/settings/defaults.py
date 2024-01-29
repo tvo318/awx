@@ -11,6 +11,7 @@ from datetime import timedelta
 
 # python-ldap
 import ldap
+from split_settings.tools import include
 
 
 DEBUG = True
@@ -32,6 +33,18 @@ DATABASES = {
         'TEST': {
             # Test database cannot be :memory: for inventory tests.
             'NAME': os.path.join(BASE_DIR, 'awx_test.sqlite3')
+        },
+    }
+}
+
+# Special database overrides for dispatcher connections listening to pg_notify
+LISTENER_DATABASES = {
+    'default': {
+        'OPTIONS': {
+            'keepalives': 1,
+            'keepalives_idle': 5,
+            'keepalives_interval': 5,
+            'keepalives_count': 5,
         },
     }
 }
@@ -130,6 +143,9 @@ BULK_JOB_MAX_LAUNCH = 100
 
 # Maximum number of host that can be created in 1 bulk host create
 BULK_HOST_MAX_CREATE = 100
+
+# Maximum number of host that can be deleted in 1 bulk host delete
+BULK_HOST_MAX_DELETE = 250
 
 SITE_ID = 1
 
@@ -336,6 +352,7 @@ INSTALLED_APPS = [
     'awx.ui',
     'awx.sso',
     'solo',
+    'ansible_base.rest_filters',
 ]
 
 INTERNAL_IPS = ('127.0.0.1',)
@@ -350,12 +367,6 @@ REST_FRAMEWORK = {
         'awx.api.authentication.LoggedBasicAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': ('awx.api.permissions.ModelAccessPermission',),
-    'DEFAULT_FILTER_BACKENDS': (
-        'awx.api.filters.TypeFilterBackend',
-        'awx.api.filters.FieldLookupBackend',
-        'rest_framework.filters.SearchFilter',
-        'awx.api.filters.OrderByBackend',
-    ),
     'DEFAULT_PARSER_CLASSES': ('awx.api.parsers.JSONParser',),
     'DEFAULT_RENDERER_CLASSES': ('awx.api.renderers.DefaultJSONRenderer', 'awx.api.renderers.BrowsableAPIRenderer'),
     'DEFAULT_METADATA_CLASS': 'awx.api.metadata.Metadata',
@@ -1063,3 +1074,13 @@ CLEANUP_HOST_METRICS_HARD_THRESHOLD = 36  # months
 # Host metric summary monthly task - last time of run
 HOST_METRIC_SUMMARY_TASK_LAST_TS = None
 HOST_METRIC_SUMMARY_TASK_INTERVAL = 7  # days
+
+
+# django-ansible-base
+ANSIBLE_BASE_TEAM_MODEL = 'main.Team'
+ANSIBLE_BASE_ORGANIZATION_MODEL = 'main.Organization'
+
+from ansible_base.lib import dynamic_config  # noqa: E402
+
+settings_file = os.path.join(os.path.dirname(dynamic_config.__file__), 'dynamic_settings.py')
+include(settings_file)
