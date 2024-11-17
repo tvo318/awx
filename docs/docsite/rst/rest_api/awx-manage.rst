@@ -38,7 +38,9 @@ By default, inventory data already stored in AWX blends with data from the exter
     awx-manage inventory_import --source=/ansible/inventory/ --inventory-id=1 --overwrite
 
 
-.. include:: ../common/overwrite_var_note_2-4-0.rst
+.. note::
+
+    Edits and additions to Inventory host variables persist beyond an inventory sync as long as ``--overwrite_vars`` is **not** set. 
 
 
 Cleanup of old data
@@ -55,7 +57,6 @@ This permanently deletes the job details and job output for jobs older than a sp
 
 -  ``awx-manage cleanup_activitystream [--help]``
 
-This permanently deletes any :ref:`ug_activitystreams` data older than a specific number of days.
 
 Cluster management
 ~~~~~~~~~~~~~~~~~~~~
@@ -63,13 +64,8 @@ Cluster management
 .. index:: 
    single: awx-manage; cluster management
 
-Refer to the :ref:`ag_clustering` section for details on the
-``awx-manage provision_instance`` and ``awx-manage deprovision_instance``
-commands.
-
-
 .. note::
-    Do not run other ``awx-manage`` commands unless instructed by Ansible Support.
+    Do not run other ``awx-manage`` commands unless instructed by Red Hat Ansible personnel.
 
 
 .. _ag_token_utility:
@@ -168,9 +164,6 @@ Use this command to delete all sessions that have expired. Refer to `Django's do
 
 	.. _`Django's documentation on clearsessions`: https://docs.djangoproject.com/en/2.1/topics/http/sessions/#clearing-the-session-store
 
-
-
-For more information on OAuth2 token management in the AWX user interface, see the :ref:`ug_applications_auth` section of the |atu|.
 
 
 Analytics gathering
