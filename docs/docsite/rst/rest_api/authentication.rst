@@ -115,8 +115,3 @@ Example with curl:
 
 For more information about the Basic HTTP Authentication scheme, see `RFC 7617 <https://datatracker.ietf.org/doc/html/rfc7617>`_.
 
-.. note::
-
-	You can disable the Basic Auth for security purposes from the Miscellaneous Authentication settings of the AWX UI Settings menu:
-
-	.. image:: ../common/images/configure-awx-auth-basic-off.png
