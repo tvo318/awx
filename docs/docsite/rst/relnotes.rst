@@ -1,3 +1,12 @@
+.. _release_notes:
+
+**************
+Release Notes
+**************
+
+
+Refer to `AWX Release Notes <https://github.com/ansible/awx/releases>`_.
+
 .. _ir_known_issues:
 
 *************

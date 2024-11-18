@@ -7,8 +7,7 @@ Ansible AWX helps teams manage complex multi-tier deployments by adding control,
    :maxdepth: 2
    :caption: Welcome
 
-   Release Notes <https://github.com/ansible/awx/releases>
-   known_issues
+   relnotes
    
 
 .. toctree::
